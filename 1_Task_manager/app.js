@@ -1,16 +1,24 @@
+
 const express = require('express')
 const app = express()
+const tasks = require('./routes/tasks')
 
+require('./db/connect')
 
 
 //static asset (middleware)
 app.use(express.static('./public'))
+//middleware for json handle
+app.use(express.json())
 
 
 
-app.get('/',(req,res)=>{
-    res.status(200).send('hi there saad')
-})
+// get the routes
+app.use('/api/v1/tasks',tasks)
+
+
+
+
 
 
 
