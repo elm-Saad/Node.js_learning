@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const tasks = require('./routes/tasks')
 
-require('./db/connect')
+const connectDB = require('./db/connect')
 
 
 //static asset (middleware)
@@ -18,10 +18,15 @@ app.use('/api/v1/tasks',tasks)
 
 
 
+const start = async ()=>{
+    try {
+        await connectDB()
+        app.listen(5000,()=>{
+            console.log('server is running on port 5000')
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-
-
-
-app.listen(5000,()=>{
-    console.log('server is running on port 5000')
-})
+start()
