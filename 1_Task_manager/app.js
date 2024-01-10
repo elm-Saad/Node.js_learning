@@ -1,38 +1,31 @@
 const express = require('express')
 const app = express()
 const tasks = require('./routes/tasks')
-
 const connectDB = require('./db/connect')
 require('dotenv').config()
-
-
 const notFound = require('./middleware/NotFound')
 const errorHandlerMiddleware = require('./middleware/error')
 
-//static asset (middleware)
+//(middleware)
 app.use(express.static('./public'))
-//middleware for json handle
 app.use(express.json())
 
-
-
-// get the routes
+//routes
 app.use('/api/v1/tasks',tasks)
-
 
 app.use(notFound)
 app.use(errorHandlerMiddleware)
 
+const port = process.env.PORT || 5000
 
 const start = async ()=>{
     try {
         await connectDB(process.env.MONGO_URL)
-        app.listen(5000,()=>{
-            console.log('server is running on port 5000')
+        app.listen(port,()=>{
+            console.log('server is running on port ' + port)
         })
     } catch (error) {
         console.log(error);
-        console.log('there was a big error!!!!');
     }
 }
 
