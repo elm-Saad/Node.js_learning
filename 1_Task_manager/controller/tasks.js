@@ -11,6 +11,7 @@ const getAllTasks = async (req,res)=>{
         res.status(500).json({msg:error})
     }
 }
+
 const createTasks = async (req,res)=>{
     try {
         /**
@@ -27,14 +28,62 @@ const createTasks = async (req,res)=>{
     }
 
 }
-const getTask = (req,res)=>{
-    res.send(req.params)
+
+const getTask = async (req,res)=>{
+    try {
+        const {id:taskID} = req.params
+        const task = await Task.findOne({_id:taskID})
+        if(!task){
+            // 404 no found
+            return res.status(404).json({msg:"no task with id " + taskID})
+        }
+        return res.status(200).json({task})
+    } catch (error) {
+        //error from mongoose also if the id info is completely random
+        res.status(500).json({msg:error})
+
+    }
 }
-const updateTask = (req,res)=>{
-    console.log(req.body);
+
+const updateTask = async (req,res)=>{
+    try {
+        const {id:taskID} = req.params
+        const task = await Task.findByIdAndUpdate({_id:taskID},req.body,{
+            new:true,//return the new item automatically
+            runValidators:true, // to run the validator set up when creating the mongoose.Schema in model
+        })
+
+        if(!task){
+            // 404 no found
+            return res.status(404).json({msg:"no task with id " + taskID})
+        }
+        // task updated 
+        return res.status(200).json({task})
+
+
+    } catch (error) {
+        
+        res.status(500).json({msg:error})
+    }
 }
-const deleteTask = (req,res)=>{
-    console.log(req.params);
+
+const deleteTask = async(req,res)=>{
+    try {
+        const {id:taskID} = req.params
+        const task = await Task.findByIdAndDelete({_id:taskID})
+
+        if(!task){
+            // 404 no found
+            return res.status(404).json({msg:"no task with id " + taskID})
+        }
+        // task deleted 
+        return res.status(200).json({msg:'task deleted'})
+
+
+    } catch (error) {
+        
+        res.status(500).json({msg:error})
+    }
 }
 
 
