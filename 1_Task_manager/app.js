@@ -7,6 +7,7 @@ require('dotenv').config()
 
 
 const notFound = require('./middleware/NotFound')
+const errorHandlerMiddleware = require('./middleware/error')
 
 //static asset (middleware)
 app.use(express.static('./public'))
@@ -20,6 +21,8 @@ app.use('/api/v1/tasks',tasks)
 
 
 app.use(notFound)
+app.use(errorHandlerMiddleware)
+
 
 const start = async ()=>{
     try {

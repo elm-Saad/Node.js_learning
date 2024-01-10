@@ -3,6 +3,7 @@ const asyncWrapper  = (fn)=>{
         try {
             await fn(req,res,next)
         } catch (error) {
+            // handled by the default error handler from express
             next(error)
         }
     }
