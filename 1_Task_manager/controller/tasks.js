@@ -45,12 +45,15 @@ const getTask = async (req,res)=>{
     }
 }
 
+// put => replace existing resource | patch => Parcel update (just updating the some prop and the rest keep the same)
 const updateTask = async (req,res)=>{
     try {
         const {id:taskID} = req.params
         const task = await Task.findByIdAndUpdate({_id:taskID},req.body,{
             new:true,//return the new item automatically
             runValidators:true, // to run the validator set up when creating the mongoose.Schema in model
+            // if u use put method  to add any default value that is un updated
+            // overwrite:true
         })
 
         if(!task){
