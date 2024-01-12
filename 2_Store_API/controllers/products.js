@@ -1,5 +1,7 @@
 const product = require('../models/product')
-
+/**
+ * https://hn.algolia.com/api
+ */
 /** 
  * //=> with out using custom async error (try catch) throw error will invoke error handle by the require('express-async-errors')
  * //=> throw  new Error('testing async error')
@@ -15,7 +17,7 @@ const getALLproducts = async (req,res)=>{
     // search Query Params filtering
     //?name=.&....
     
-    const {featured,company,name,sort} = req.query
+    const {featured,company,name,sort,fields} = req.query
     const queryObject = {}
 
     if(featured){
@@ -43,6 +45,26 @@ const getALLproducts = async (req,res)=>{
     }else{
         result = result.sort('createdAt') // default sort
     }
+
+    // select options => return just the selected props
+    if(fields){
+        const selectedList = fields.split(',').join(' ')
+        result = result.select(selectedList)
+    }
+
+    // Skip & Limit => pagination 
+
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 10
+
+    /**
+     * pagination logic => skip number of items base on the page requested
+     */
+    const skip = (page-1)*limit
+
+    result = result.skip(skip).limit(limit)
+
+
 
     const products = await result
     res.status(200).json({products, nbHits: products.length})
