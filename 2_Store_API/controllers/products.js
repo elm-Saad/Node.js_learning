@@ -17,7 +17,7 @@ const getALLproducts = async (req,res)=>{
     // search Query Params filtering
     //?name=.&....
     
-    const {featured,company,name,sort,fields} = req.query
+    const {featured,company,name,sort,fields,numericFilters} = req.query
     const queryObject = {}
 
     if(featured){
@@ -33,6 +33,39 @@ const getALLproducts = async (req,res)=>{
          * not locking for the exact name but for the pattern of the name and option i => case insensitive
          */
         queryObject.name = {$regex: name, $options:'i'}
+    }
+
+    // numericFilters logic > < = ...
+
+    /**nard coded =>  .find({price:{$gt:10}}) */
+    if(numericFilters){
+        const operatorMap = {
+            '>':'$gt',
+            '>=':'$gte',
+            '=':'$eq',
+            '<':'$lt',
+            '<=':'$lte'
+        }
+        const regEx = /\b(<|>|>=|=|<|<=)\b/g
+        let MongooseFilters = numericFilters.replace(
+            regEx,
+            (match) => `_${operatorMap[match]}_`
+        )
+        //set option for just numbers to have numericFilters
+        const options = ['price','rating']
+
+        MongooseFilters = MongooseFilters.split(',').forEach(element => {
+            //price_$gt_40 
+            const [field,operator,value]=element.split('_')
+            if(options.includes(field)){
+                queryObject[field] = {[operator]:Number(value)}
+                /**
+                 * {
+                 *  price:{'$gt': 40}
+                 * }
+                 */
+            }
+        })
     }
 
 
@@ -63,7 +96,6 @@ const getALLproducts = async (req,res)=>{
     const skip = (page-1)*limit
 
     result = result.skip(skip).limit(limit)
-
 
 
     const products = await result
