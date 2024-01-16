@@ -6,7 +6,7 @@ The starter is a copy of jobs-api final project, just with additional data.
 
 #### Setup
 
-- navigate to 06.5-jobster-api/starter
+- navigate to 4_jobs_api
 - install dependencies
 
 ```sh
@@ -14,7 +14,6 @@ npm install
 ```
 
 - create .env and provide correct values
-- you can copy from previous project (just change the DB name)
 
 .env
 
@@ -106,8 +105,6 @@ package.json
 - let's explore client folder
 - open client folder
 - it's a react app built with CRA
-- it's the same as in my React Course (JOBSTER APP),
-  just base url points to our current server (instead of heroku app)
 
 utils/axios.js
 
