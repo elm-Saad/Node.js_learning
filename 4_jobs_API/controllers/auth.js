@@ -10,8 +10,14 @@ const register = async (req,res)=>{
   if(!name|!email||!password){
     throw new BadRequestError('please provide all data')
   }
+
+  const salt = await bcrypt.genSalt(10)
+  const hashPassword = await bcrypt.hash(password,salt)
+
+
+  const tempUser = {name,email,password:hashPassword}
   // using bcrypt.js for hashing passwords
-  const user = await User.create({...req.body})
+  const user = await User.create({...tempUser})
 
   res.status(StatusCodes.CREATED).json({user})
 
