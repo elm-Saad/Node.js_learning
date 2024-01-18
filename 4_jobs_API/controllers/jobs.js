@@ -1,3 +1,8 @@
+//get module 
+const Job = require('../models/Job')
+
+const { BadRequestError, NotFoundError } = require('../errors')
+const {StatusCodes} = require('http-status-codes')
 
 
 const getAllJobs = async (req, res) => {
@@ -8,7 +13,22 @@ const getJob = async (req, res) => {
 }
 
 const createJob = async (req, res) => {
-  res.send('create a job')
+
+  //get the user id using createdBy in the module
+    /**
+   * in the req.user => from the authentication middleware
+    * {
+    "payLoad": "astro"
+  }
+   */
+  req.body.createdBy = req.user.userId // now this job is assign to the ne created it only
+  // add to DB
+  console.log(req.user);
+  const  job = await Job.create(req.body)
+
+
+  res.status(StatusCodes.CREATED).json({ job })
+
 }
 
 const updateJob = async (req, res) => {
