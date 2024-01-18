@@ -16,8 +16,18 @@ const auth = async (req, res, next) => {
   try {
     // verify the token
     const payLoad = jwt.verify(token,process.env.JWT_SECRET)
-    // attach the user to the job routes
+
+    
+
+    // attach the user to the job routes if the token is true 
     req.user = {userId:payLoad.userId,payLoad:payLoad.name}
+
+    /**
+     * other approach => search in DB and remove the password from the data returned then send the entire user
+     */
+    // const user = User.findById(payLoad.id).select('-password')
+    // req.user = user
+
     next()
   } catch (error) {
     throw new UnauthenticatedError('Authentication invalid')
