@@ -10,8 +10,15 @@ const register = async (req,res)=>{
   //   throw new BadRequestError('please provide all data')
   // }
 
+  /**
+   * we base user directly to be created with out validation =>
+   * the validation wil be handled MongoDb and base the error to the error handler middleware
+   * to be then handled locally  if (err.name === 'ValidationError') 
+   */
   
   const user = await User.create({...req.body})
+
+
   // create the token
   // const token = jwt.sign({userID:user._id,name:user.name},"jwtSecret",{expiresIn:'30d'})
 

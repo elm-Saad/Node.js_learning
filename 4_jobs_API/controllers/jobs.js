@@ -20,6 +20,11 @@ const getJob = async (req, res) => {
     createdBy:userId
   })
 
+  /**
+   * if the id of a job is wrong (dose not exist) => NotFoundError('No job with is '+ JobId)
+   * but if the id is different from what mongoDB expecting like 23 ... or more numbers then normal id 
+   * this error will not work => the if (err.name === 'CastError') in the error-handler is the one will be thrown
+   */
   if(!singleJob){
     throw new NotFoundError('No job with is '+ JobId)
   }
