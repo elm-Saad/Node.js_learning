@@ -7,9 +7,14 @@ const cors = require('cors') // ensure that our APi is accessible from other dom
 const xss = require('xss-clean') // xros site scripting handle
 const rateLimiter = require('express-rate-limit') // amount of request user can make
 
+// swagger docs
+const swaggerUI = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./swagger.yaml')
+
 
 const express = require('express');
-const app = express();
+const app = express()
 
 const connectDB = require('./db/connect');
 const authUser  = require('./middleware/authentication')
@@ -19,6 +24,7 @@ const jobsRouter = require('./routes/jobs');
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+
 
 
 app.use(express.json());
@@ -34,8 +40,11 @@ app.use(cors())
 app.use(xss())
 //
 
+
+// 
+app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocument))
 app.get('/', (req, res) => {
-  res.send('<h1>Jobs APIs and more stuff</h1>');
+  res.send('<h1>Jobs APIs and more stuff</h1><a href="/api-docs">docs</a>');
 });
 
 // routes
@@ -59,4 +68,12 @@ const start = async () => {
   }
 };
 
-start();
+start();   
+
+
+// api docs add 
+/**
+ *   "swagger-ui-express": "^4.1.6",//
+    "yamljs": "^0.3.0"//
+    create api in postman => https://app.apimatic.io/ => get yaml 3
+ */
