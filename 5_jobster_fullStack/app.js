@@ -8,6 +8,8 @@ const xss = require('xss-clean');
 
 const express = require('express');
 const app = express();
+const path = require('path');
+
 
 const connectDB = require('./db/connect');
 const authenticateUser = require('./middleware/authentication');
@@ -18,7 +20,7 @@ const jobsRouter = require('./routes/jobs');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
-
+app.use(express.static(path.resolve(__dirname,'./client/build')))
 app.use(express.json());
 app.use(helmet());
 app.use(xss());
@@ -28,6 +30,17 @@ app.use(xss());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 
+
+//serve index.html
+/**
+ * get index.html from client and serve it for all routes that are not part from 
+ * api routes
+ * 
+ * the index.html is the (/) in routes
+ */
+app.get('*',(req,res)=>{
+  res.sendFile(path.resolve(__dirname,'./client/build', 'index.html'))
+})
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
