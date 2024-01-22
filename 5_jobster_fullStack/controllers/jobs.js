@@ -2,9 +2,70 @@ const Job = require('../models/Job')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
 
+
 const getAllJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.userId }).sort('createdAt')
-  res.status(StatusCodes.OK).json({ jobs, count: jobs.length })
+  /**(addThis) */ 
+  const {search,status,jobType,sort} = req.query
+  
+  const QueryObject = {
+    createdBy : req.user.userId
+  }
+
+  /**start filtering logic */
+
+  /**
+   * search | status | JobType
+   */
+   /**search by position */
+   if(search){
+    // search for pattern ($regex) && its a case insensitive (i)
+    QueryObject.position = {$regex:search,$options:'i'}
+  }
+  /** Status filter */
+  if(status && status!=='all'){
+    QueryObject.status = status //from enum: ['interview', 'declined', 'pending']
+  }
+  /** JobType filter */
+  if(jobType && jobType!=='all'){
+    QueryObject.jobType = jobType //from enum:['full-time','part-time','remote','internship']
+  }
+
+  let result = Job.find(QueryObject)
+
+  /**
+   * sorting
+   */
+  if(sort ==='latest'){
+    result = result.sort('-createdAt')
+  }
+  if(sort ==='oldest'){
+    result = result.sort('createdAt')
+  }
+  if(sort ==='a-z'){
+    result = result.sort('position')
+  }
+  if(sort ==='z-a'){
+    result = result.sort('-position')
+  }
+
+  /**
+   * pagination using skip & limit
+   */
+
+  const page = Number(req.query.page) || 1
+  const limit = Number(req.query.limit) || 10
+  const skip = (page - 1 )* limit
+
+  result = result.skip(skip).limit(limit)
+
+  /**end */
+
+  const jobs = await result
+
+  const totalJobs = await Job.countDocuments(QueryObject)//=> count total jobs based on the /*query provided*/ not (based on the user jobs)
+  const numOfPages = Math.ceil(totalJobs/limit)
+
+  res.status(StatusCodes.OK).json({ jobs,totalJobs,numOfPages})
 }
 const getJob = async (req, res) => {
   const {

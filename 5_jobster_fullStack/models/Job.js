@@ -38,3 +38,15 @@ const JobSchema = new mongoose.Schema(
 )
 
 module.exports = mongoose.model('Job', JobSchema)
+
+/**
+ * example:
+ *  {
+      "company": "Legros LLC",
+      "position": "Safety Technician IV",
+      "status": "declined",
+      "jobType": "full-time",
+      "createdBy": "62f801d0510a7c1ed2312d52",
+      "createdAt": "2021-08-23T16:37:09Z"
+    }
+ */

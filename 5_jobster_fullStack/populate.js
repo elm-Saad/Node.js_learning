@@ -5,7 +5,7 @@ require('dotenv').config()
 const connectDB = require('./db/connect')
 const Job = require('./models/Job')
 const User = require('./models/User')
-const mockData = require('./mock-data')
+const mockData = require('./mock-data.json')
 
 
 
@@ -14,7 +14,7 @@ const start = async() =>{
     try {
         await connectDB(process.env.MONGO_URI)
         // await User.deleteMany()// start from scratch
-        await Job.deleteMany()// start from scratch
+        // await Job.deleteMany()// start from scratch
         await Job.create(mockData)
 
         console.log('populate server running : true');
