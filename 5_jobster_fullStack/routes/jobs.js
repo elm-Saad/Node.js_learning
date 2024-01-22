@@ -5,6 +5,7 @@ const router = express.Router()
 const testUser = require('../middleware/testUser')
 
 const {
+  showStats,
   createJob,
   deleteJob,
   getAllJobs,
@@ -19,7 +20,7 @@ const {
 
 
 router.route('/').post(testUser,createJob).get(getAllJobs)
-
+router.route('stats').get(showStats)
 router.route('/:id').get(getJob).delete(testUser,deleteJob).patch(testUser,updateJob)
 
 module.exports = router

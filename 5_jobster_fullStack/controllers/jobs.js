@@ -2,11 +2,22 @@ const Job = require('../models/Job')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
 
+/**(addThis) */
+const showStats = async (req,res) =>{
+  res.status(StatusCodes.OK).json({
+    defaultStats:{
+
+    },
+    monthlyApplication:{
+
+    }
+  })
+}
 
 const getAllJobs = async (req, res) => {
   /**(addThis) */ 
   const {search,status,jobType,sort} = req.query
-  
+
   const QueryObject = {
     createdBy : req.user.userId
   }
@@ -127,6 +138,7 @@ const deleteJob = async (req, res) => {
 }
 
 module.exports = {
+  showStats,
   createJob,
   deleteJob,
   getAllJobs,

@@ -17,3 +17,10 @@ npm install && npm start
 
 - [Mockaroo](https://mockaroo.com/)
 
+
+### mongodb aggregation pipeline
+
+- [docs](https://www.mongodb.com/docs/manual/core/aggregation-pipeline/)
+
+
+
