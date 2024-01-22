@@ -1,17 +1,95 @@
 const Job = require('../models/Job')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
+/**(addThis) */
+const mongoose = require('mongoose')
+const moment = require('moment')
 
 /**(addThis) */
 const showStats = async (req,res) =>{
-  res.status(StatusCodes.OK).json({
-    defaultStats:{
 
-    },
-    monthlyApplication:{
+  /**set up aggregate */
+  let stats = await Job.aggregate([
+    //first stage => match jobs base on the current user (job of the current user)
+    //mongoose.Types.ObjectId=> to turn the String (req.user.userId) => to object id mongoose takes
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    //second stage=> group base on status => count how many pending / Interviews  / Declined =>using count: { $sum: 1 }
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
 
-    }
-  })
+  // console.log(stats);
+  /**
+   * [
+      { _id: 'declined', count: 22 },
+      { _id: 'pending', count: 28 },
+      { _id: 'interview', count: 25 }
+    ]
+   */
+
+    // the front end looks for data like 
+    /**
+     *  {
+     *    declined: 22 ,
+     *    pending: 28 ,
+     *    interview: 25
+     *  }
+     */
+
+  stats = stats.reduce((acc, curr) => {
+    const { _id: title, count } = curr;
+
+    acc[title] = count;
+    return acc;
+  }, {});
+
+  // console.log(stats);
+  /**
+   * { interview: 25, declined: 22, pending: 28 }
+   */
+
+  /**
+   * if there is a new user with no data the stats object here will be like => {}
+   * to solve this => create defaultStats in this case
+   */
+
+  const defaultStats = {
+    pending: stats.pending || 0,
+    interview: stats.interview || 0,
+    declined: stats.declined || 0,
+  };
+
+
+
+  /**
+   * base on the chart library the setup of monthlyApplications will send the data 
+   * that make the most sense to the library
+   */
+
+  // let monthlyApplications = await Job.aggregate([
+  //   { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+  //   {
+  //     $group: {
+  //       _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
+  //       count: { $sum: 1 },
+  //     },
+  //   },
+  //   { $sort: { '_id.year': -1, '_id.month': -1 } },
+  //   { $limit: 6 },
+  // ]);
+
+  // monthlyApplications = monthlyApplications.map((item) => {
+  //     const {
+  //       _id: { year, month },
+  //       count,
+  //     } = item;
+  //     const date = moment()
+  //       .month(month - 1)
+  //       .year(year)
+  //       .format('MMM Y');
+  //     return { date, count };
+  // }).reverse();
+
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications:{} });
 }
 
 const getAllJobs = async (req, res) => {
