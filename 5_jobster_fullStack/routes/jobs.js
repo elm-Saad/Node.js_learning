@@ -1,6 +1,9 @@
 const express = require('express')
-
 const router = express.Router()
+
+
+const testUser = require('../middleware/testUser')
+
 const {
   createJob,
   deleteJob,
@@ -9,8 +12,14 @@ const {
   getJob,
 } = require('../controllers/jobs')
 
-router.route('/').post(createJob).get(getAllJobs)
+/**(addThis) */ 
+/**
+ * Restrict  createJob,deleteJob,updateJob for Test user
+ */
 
-router.route('/:id').get(getJob).delete(deleteJob).patch(updateJob)
+
+router.route('/').post(testUser,createJob).get(getAllJobs)
+
+router.route('/:id').get(getJob).delete(testUser,deleteJob).patch(testUser,updateJob)
 
 module.exports = router
