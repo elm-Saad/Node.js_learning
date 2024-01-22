@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema({
 })
 
 UserSchema.pre('save', async function () {
-  /**(addThis) */ 
+  /**(addThis)   solve bug in UpdateUser in auth / controller*/ 
 
   if(!this.isModified('password')){
     return ;

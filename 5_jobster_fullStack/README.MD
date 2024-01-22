@@ -13,3 +13,7 @@ npm install && npm start
 ```
 
 
+#### Setuo Mock Data
+
+- [Mockaroo](https://mockaroo.com/)
+

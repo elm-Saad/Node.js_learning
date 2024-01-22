@@ -1,9 +1,11 @@
-// populate all data in products.json to the DB
+// delete all users or all jobs from DB => start fresh
+// populate Database
 require('dotenv').config()
 
 const connectDB = require('./db/connect')
 const Job = require('./models/Job')
 const User = require('./models/User')
+const mockData = require('./mock-data')
 
 
 
@@ -11,10 +13,11 @@ const User = require('./models/User')
 const start = async() =>{
     try {
         await connectDB(process.env.MONGO_URI)
-        await User.deleteMany()// start from scratch
+        // await User.deleteMany()// start from scratch
         await Job.deleteMany()// start from scratch
+        await Job.create(mockData)
 
-        console.log('server running (clear all Users and Jobs)');
+        console.log('populate server running : true');
         process.exit(0) //to exit the process
     } catch (error) {
         console.log("populate error: " + error);
