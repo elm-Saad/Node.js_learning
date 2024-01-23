@@ -21,6 +21,3 @@ npm install && npm start
 ### mongodb aggregation pipeline
 
 - [docs](https://www.mongodb.com/docs/manual/core/aggregation-pipeline/)
-
-
-

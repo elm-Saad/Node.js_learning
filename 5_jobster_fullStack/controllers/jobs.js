@@ -73,28 +73,46 @@ const showStats = async (req,res) =>{
     {
       $group: {
         _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
-        count: { $sum: 1 },
+        count: { $sum: 1 },// have the count
       },
     },
-    { $sort: { '_id.year': -1, '_id.month': -1 } },// - => for latest data => last months and ech month have a year
-    { $limit: 6 },//get the last 6 month
+    { $sort: { '_id.year': -1, '_id.month': -1 } },// - =>data in deciding order (last month -> new month )=> last months and ech month have a year
+    { $limit: 6 },//only get the last 6 month
   ]);
 
-  console.log(monthlyApplications);
+  // console.log(monthlyApplications);
+  /**
+   * [
+      { _id: { year: 2022, month: 8 }, count: 5 },
+      { _id: { year: 2022, month: 7 }, count: 6 },
+      { _id: { year: 2022, month: 6 }, count: 5 },
+      { _id: { year: 2022, month: 5 }, count: 4 },
+      { _id: { year: 2022, month: 4 }, count: 6 },
+      { _id: { year: 2022, month: 3 }, count: 8 }
+    ]
+   */
 
-  // monthlyApplications = monthlyApplications.map((item) => {
-  //     const {
-  //       _id: { year, month },
-  //       count,
-  //     } = item;
-  //     const date = moment()
-  //       .month(month - 1)
-  //       .year(year)
-  //       .format('MMM Y');
-  //     return { date, count };
-  // }).reverse();
+    /**
+     * the front end (charts library need the data to be like  : 
+     * { date: 'Mar 2022', count: 8 },
+        { date: 'Apr 2022', count: 6 },
+        { date: 'May 2022', count: 4 },
+        { date: 'Jun 2022', count: 5 },
+        { date: 'Jul 2022', count: 6 },
+        { date: 'Aug 2022', count: 5 }
 
-  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications:{} });
+        using moment js for date formatting
+     */
+  monthlyApplications = monthlyApplications.map((item) => {
+      const { _id: { year, month },count} = item;
+      // set up new date => 
+      const date = moment().month(month - 1).year(year).format('MMM Y');
+      return { date, count };
+  }).reverse();// send the last month (new one ) as the last item and the (old month) as the first items in the data
+
+  // console.log(monthlyApplications);
+
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 }
 
 const getAllJobs = async (req, res) => {
