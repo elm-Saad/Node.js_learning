@@ -5,7 +5,7 @@ const { register, login, UpdateUser } = require('../controllers/auth')
 const authenticateUser = require('../middleware/authentication')
 const testUser = require('../middleware/testUser')
 const rateLimiter = require('express-rate-limit')
-/**(addThis) API Limiter*/
+/** API Limiter*/
 /**
  * just for register and login 
  * if someone Login or register from the same Ip many many times
@@ -22,7 +22,6 @@ const ApiLimiter = rateLimiter({
 
 router.post('/register',ApiLimiter, register)
 router.post('/login',ApiLimiter, login)
-/**(addThis) */
 
 /**
  * the update user is authenticated route on {{url}}/auth/updateUser

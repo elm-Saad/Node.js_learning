@@ -23,8 +23,6 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please provide password'],
     minlength: 6,
   },
-
-  /*(addThis)*/
   lastName:{
     type:String,
     trim:true,// any space added will be trim
@@ -42,7 +40,7 @@ const UserSchema = new mongoose.Schema({
 })
 
 UserSchema.pre('save', async function () {
-  /**(addThis)   solve bug in UpdateUser in auth / controller*/ 
+  /** solve bug in UpdateUser in auth / controller*/ 
 
   if(!this.isModified('password')){
     return ;

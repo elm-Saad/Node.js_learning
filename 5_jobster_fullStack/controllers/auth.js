@@ -7,7 +7,6 @@ const register = async (req, res) => {
  
   const token = user.createJWT()
   res.status(StatusCodes.CREATED).json({ 
-    /**(addThis) */
     user: { 
       email:user.email,
       lastName:user.lastName,
@@ -45,7 +44,7 @@ const login = async (req, res) => {
     }})
 }
 
-/**(addThis) */
+
 const UpdateUser = async (req,res)=>{
   const {email,name,lastName,location} = req.body
   

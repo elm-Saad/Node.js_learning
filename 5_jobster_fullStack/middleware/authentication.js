@@ -13,7 +13,7 @@ const auth = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
     // attach the user to the job routes
-     /**(addThis) test user logic */ 
+     /**() test user logic */ 
      const testUser = payload.userId === '65ae424cd12d1d3b5ccae19f'
     req.user = { userId: payload.userId, name: payload.name ,testUser}
     next()

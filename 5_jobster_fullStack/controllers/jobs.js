@@ -1,11 +1,9 @@
 const Job = require('../models/Job')
 const { StatusCodes } = require('http-status-codes')
 const { BadRequestError, NotFoundError } = require('../errors')
-/**(addThis) */
 const mongoose = require('mongoose')
 const moment = require('moment')
 
-/**(addThis) */
 const showStats = async (req,res) =>{
 
   /**set up aggregate pipeline */
