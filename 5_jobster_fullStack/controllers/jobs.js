@@ -8,7 +8,7 @@ const moment = require('moment')
 /**(addThis) */
 const showStats = async (req,res) =>{
 
-  /**set up aggregate */
+  /**set up aggregate pipeline */
   let stats = await Job.aggregate([
     //first stage => match jobs base on the current user (job of the current user)
     //mongoose.Types.ObjectId=> to turn the String (req.user.userId) => to object id mongoose takes
@@ -65,17 +65,22 @@ const showStats = async (req,res) =>{
    * that make the most sense to the library
    */
 
-  // let monthlyApplications = await Job.aggregate([
-  //   { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
-  //   {
-  //     $group: {
-  //       _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
-  //       count: { $sum: 1 },
-  //     },
-  //   },
-  //   { $sort: { '_id.year': -1, '_id.month': -1 } },
-  //   { $limit: 6 },
-  // ]);
+  let monthlyApplications = await Job.aggregate([
+    //first stage => match jobs base on the current user (job of the current user)
+    //mongoose.Types.ObjectId=> to turn the String (req.user.userId) => to object id mongoose takes
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    // second stage => get year (provided by mongoDB) and the month
+    {
+      $group: {
+        _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { '_id.year': -1, '_id.month': -1 } },// - => for latest data => last months and ech month have a year
+    { $limit: 6 },//get the last 6 month
+  ]);
+
+  console.log(monthlyApplications);
 
   // monthlyApplications = monthlyApplications.map((item) => {
   //     const {
